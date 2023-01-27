@@ -1,4 +1,5 @@
-# Keen - bold to be expressive                                                              <sub>Il coraggio di manifestare i propri sentimenti</sub>
+# Keen - bold to be expressive 
+Il coraggio di manifestare i propri sentimenti
 
 # Contesto
 Sono passati 4 anni da quando è scoppiato il virus del Covid-19. Pian piano il mondo si sta riprendendo la propria libertà e la propria autonomia che gli erano stati privati durante gli anni della pandemia.                                                                           
@@ -64,13 +65,13 @@ print(files)
 
 # Iterate through the list of files
 for file in files:
-# Get the file extension
-extension = os.path.splitext(file)[1]
-# Check if the file is an image file (JPG, PNG, BMP)
-if extension in [".jpg"]:
-# Open the image using OpenCV
-img = cv2.imread(os.path.join(file_path, file))
-screen_saver_images.append(img)
+   # Get the file extension
+   extension = os.path.splitext(file)[1]
+   # Check if the file is an image file (JPG, PNG, BMP)
+   if extension in [".jpg"]:
+      # Open the image using OpenCV
+      img = cv2.imread(os.path.join(file_path, file))
+      screen_saver_images.append(img)
 
 screen_saver_image = cv2.imread(os.path.join(file_path,random.choice(files)))
 ```
@@ -80,10 +81,11 @@ Lo script cattura inoltre i fotogrammi video e utilizza la libreria FER per rile
 
 2.1. **Ciclo "While"**
 
-Il codice utilizza un ciclo infinito "while" per catturare continuamente i frame video dalla fotocamera usando il cv2.VideoCapture()function. 
-All'interno del ciclo while, controlla l'input dell'utente in particolare per il tasto 'q' ( per uscire dal programma ) e il tasto della barra spaziatrice ( per attivare o disattivare lo screen saver e iniziare a registrare le emozioni facciali nella cornice ). 
+Il codice utilizza un ciclo infinito "while" per catturare continuamente i frame video dalla fotocamera usando il cv2.VideoCapture(0) dove 0 indica l'utilizzo della webcam predefinita.
 
-2.2. **Screensaver**
+Viene poi creata una variabile "screen_saver" che verifica se lo screensaver deve essere attivato. Viene controllato l'input dell'utente per la pressione dei tasti 'q' per uscire dal programma e lo spazio per attivare o disattivare lo screensaver e iniziare a registrare le emozioni del viso nella frame.                                     
+
+2.1.1. **Se il flag dello screensaver è true**
 
 Se il flag dello screensaver è impostato su true (che significa che lo screensaver sta attualmente registrando), lo script controlla se il contatore ha raggiunto i 5 secondi. 
 In caso affermativo, seleziona un'immagine casuale dall'elenco screen_saver_images e la visualizza utilizzando la funzione cv2.imshow(). 
@@ -110,149 +112,151 @@ on=0
 
 while(True):
 	
-# Capture the video frame
-# by frame
+   # Capture the video frame
+   # by frame
 
-ret, frame = vid.read()
-k = cv2.waitKey(1)
+   ret, frame = vid.read()
+    k = cv2.waitKey(1)
 	
-# Display the resulting frame
-#cv2.imshow("frame",frame)
+    # Display the resulting frame
+    #cv2.imshow("frame",frame)
+
+    if k & 0xFF == ord('q'):
+	break
+
+    if k%256 == 32:
+	on=on+1
+	if on%2 == 1:
+	   record = True
+           screen_saver = False
+	   counter = 0 # Reset the counter
+        else:
+            record = False
+            screen_saver = True
 
 
-
-
-	if k & 0xFF == ord('q'):
-		break
-
-	if k%256 == 32:
-		on=on+1
-		if on%2 == 1:
-			record = True
-			screen_saver = False
-			counter = 0 # Reset the counter
-		else:
-			record = False
-			screen_saver = True
-
-
-	if screen_saver:
-		if counter == 5:
-			# Display a random image from the screen saver images list
-			screen_saver_image = cv2.imread(os.path.join(file_path,random.choice(files)))
-			counter = 0 # Reset the counter
-		else:
-			counter += 1 # Increment the counter
-			time.sleep(1) # Sleep for 1 second
+     if screen_saver:
+         if counter == 5:
+	      # Display a random image from the screen saver images list
+	      screen_saver_image = cv2.imread(os.path.join(file_path,random.choice(files)))
+              counter = 0 # Reset the counter
+	 else:
+	      counter += 1 # Increment the counter
+	      time.sleep(1) # Sleep for 1 second
 		
-		cv2.imshow('frame', screen_saver_image)
+	 cv2.imshow('frame', screen_saver_image)
 ```
-2.3. **Rivelatore di emozioni**
+2.1.2. **Se il flag record è true**
 
 Se il flag record è impostato su true (che significa che il video sta attualmente registrando), lo script utilizza la funzione "detect_emotions" dell'oggetto "detector" per rilevare le emozioni nel frame corrente. 
 Dopo che le emozioni sono state rilevate, vengono estratte le coordinate della bounding box della persona e i punteggi per le diverse emozioni (angry, disgusted, fear, happy, sad, surprise e neutral).
 ```
 if record:
-		dati = detector.detect_emotions(frame)
-		if len(dati) > 0:
-			xB = dati[0]['box'][0]
-			yB = dati[0]['box'][1]
-			wB = dati[0]['box'][2]
-			hB = dati[0]['box'][3]
+     dati = detector.detect_emotions(frame)
+     if len(dati) > 0:
+         xB = dati[0]['box'][0]
+         yB = dati[0]['box'][1]
+	 wB = dati[0]['box'][2]
+	 hB = dati[0]['box'][3]
 			
-			angryScore = dati[0]['emotions']['angry']
-			disgustScore = dati[0]['emotions']['disgust']
-			fearScore = dati[0]['emotions']['fear']
-			happyScore = dati[0]['emotions']['happy']
-			sadScore = dati[0]['emotions']['sad']
-			surpriseScore = dati[0]['emotions']['surprise']
-			neutralScore = dati[0]['emotions']['neutral']
+         angryScore = dati[0]['emotions']['angry']
+	 disgustScore = dati[0]['emotions']['disgust']
+	 fearScore = dati[0]['emotions']['fear']
+	 happyScore = dati[0]['emotions']['happy']
+	 sadScore = dati[0]['emotions']['sad']
+	 surpriseScore = dati[0]['emotions']['surprise']
+         neutralScore = dati[0]['emotions']['neutral']
 ```
 Il codice crea poi delle stringhe per ogni emozione con il punteggio formattato come "emozione: punteggio" e le scrive sull'immagine utilizzando la funzione cv2.putText(). 
 Inoltre, utilizza cv2.rectangle() per disegnare una barra di lunghezza proporzionale al punteggio dell'emozione accanto al testo scritto. 
 Infine, il codice utilizza cv2.addWeighted() per sovrapporre un'immagine nera trasparente sulla regione sottostante la bounding box, creando un effetto di sfocatura.
 ```
+angryScore = dati[0]['emotions']['angry']
+disgustScore = dati[0]['emotions']['disgust']
+fearScore = dati[0]['emotions']['fear']
+happyScore = dati[0]['emotions']['happy']
+sadScore = dati[0]['emotions']['sad']
+surpriseScore = dati[0]['emotions']['surprise']
+neutralScore = dati[0]['emotions']['neutral']
+
 angryString = "angry: {0:.2f}".format(angryScore)
-			disgustString = "disgust: {0:.2f}".format(disgustScore)
-			fearString = "fear:{0:.2f}".format(fearScore)
-			happyString = "happy:{0:.2f}".format(happyScore)
-			sadString = "sad:{0:.2f}".format(sadScore)
-			surpriseString = "surprise:{0:.2f}".format(surpriseScore)
-			neutralString = "neutral:{0:.2f}".format(neutralScore)
+disgustString = "disgust: {0:.2f}".format(disgustScore)
+fearString = "fear:{0:.2f}".format(fearScore)
+happyString = "happy:{0:.2f}".format(happyScore)
+sadString = "sad:{0:.2f}".format(sadScore)
+surpriseString = "surprise:{0:.2f}".format(surpriseScore)
+neutralString = "neutral:{0:.2f}".format(neutralScore)
 			
-			x1 = xB+wB-10
-			x2 = xB+wB+250
-			y1 = yB-40
-			y2 = yB+400
+x1 = xB+wB-10
+x2 = xB+wB+250
+y1 = yB-40
+y2 = yB+400
 
-			if y1 < 1:
-				y1 = 1
-			# crop undercolor region of input
-			sub = frame[y1:y2, x1:x2]
+if y1 < 1:
+y1 = 1
+# crop undercolor region of input
+sub = frame[y1:y2, x1:x2]
 
-			# create black image same size
-			black = np.zeros_like(sub)
+# create black image same size
+black = np.zeros_like(sub)
 
-			# blend the two
-			blend = cv2.addWeighted(sub, 0.75, black, 0.50, 0)
+# blend the two
+blend = cv2.addWeighted(sub, 0.75, black, 0.50, 0)
 			
-			frame[y1:y2, x1:x2] = blend
+frame[y1:y2, x1:x2] = blend
 
 
-			# write result to disk
-			# cv2.imwrite(frame, blend )
+# write result to disk
+# cv2.imwrite(frame, blend )
 
-			cv2.putText(frame,angryString,(xB+wB+5,yB),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+10),(round((xB+wB+10+150*float(angryScore))),yB+14),(255,255,255),3)
-			#cv2.rectangle(frame,(xB+wB+50,yB+40), (xB+wB+150,yB+300), (220,220,220,50),200)
-
-			cv2.putText(frame,angryString,(xB+wB+5,yB),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.putText(frame,angryString,(xB+wB+5,yB),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+10),(round((xB+wB+10+150*float(angryScore))),yB+14),(255,255,255),3)
 			
-			cv2.putText(frame,disgustString,(xB+wB+5,yB+60),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+70),(round((xB+wB+10+150*float(disgustScore))),yB+74),(255,255,255),3)
+cv2.putText(frame,disgustString,(xB+wB+5,yB+60),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+70),(round((xB+wB+10+150*float(disgustScore))),yB+74),(255,255,255),3)
 
-			cv2.putText(frame,fearString,(xB+wB+5,yB+120),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+130),(round((xB+wB+10+150*float(fearScore))),yB+134),(255,255,255),3)
+cv2.putText(frame,fearString,(xB+wB+5,yB+120),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+130),(round((xB+wB+10+150*float(fearScore))),yB+134),(255,255,255),3)
 
-			cv2.putText(frame,happyString,(xB+wB+5,yB+180),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+190),(round((xB+wB+10+150*float(happyScore))),yB+194),(255,255,255),3)
+cv2.putText(frame,happyString,(xB+wB+5,yB+180),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+190),(round((xB+wB+10+150*float(happyScore))),yB+194),(255,255,255),3)
 
-			cv2.putText(frame,sadString,(xB+wB+5,yB+240),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+250),(round((xB+wB+10+150*float(sadScore))),yB+254),(255,255,255),3)
+cv2.putText(frame,sadString,(xB+wB+5,yB+240),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+250),(round((xB+wB+10+150*float(sadScore))),yB+254),(255,255,255),3)
 
-			cv2.putText(frame,surpriseString,(xB+wB+5,yB+300),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+310),(round((xB+wB+10+150*float(surpriseScore))),yB+314),(255,255,255),3)
+cv2.putText(frame,surpriseString,(xB+wB+5,yB+300),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+310),(round((xB+wB+10+150*float(surpriseScore))),yB+314),(255,255,255),3)
 
-			cv2.putText(frame,neutralString,(xB+wB+5,yB+360),font,1,(255,255,255),2,cv2.LINE_AA)
-			cv2.rectangle(frame,(xB+wB+5,yB+370),(round((xB+wB+10+150*float(neutralScore))),yB+374),(255,255,255),3)
+cv2.putText(frame,neutralString,(xB+wB+5,yB+360),font,1,(255,255,255),2,cv2.LINE_AA)
+cv2.rectangle(frame,(xB+wB+5,yB+370),(round((xB+wB+10+150*float(neutralScore))),yB+374),(255,255,255),3)
+
+cv2.rectangle(frame,(xB,yB),(xB+wB,yB+hB),(0,255,0),5)
 ```
-2.4. **Screenshot**
+2.1.3 **Screenshot**
 
 Utilizza la libreria OpenCV (cv2) per visualizzare il frame corrente della videocamera e disegnare un rettangolo intorno all'area rilevata come un volto. Quando l'utente preme il tasto 'r', viene letta la variabile "indice" da un file di testo chiamato "indice.txt". Il nome del file dello screenshot viene quindi impostato come "screenshot + indice + .jpg" e viene salvato nella cartella specificata da "file_path". Il valore dell'indice viene quindi incrementato di 1 e scritto nuovamente nel file "indice.txt". Viene quindi visualizzato un messaggio "Screenshot salvato" sullo schermo. Infine, viene mostrato l'ultimo frame della videocamera con il rettangolo intorno al volto e la scritta "Screenshot saved".
 ```
-cv2.rectangle(frame,(xB,yB),(xB+wB,yB+hB),(0,255,0),5)
+	# Check if the user pressed the 'r' key
+	if k == ord('r'):
+	index_file = open("index.txt", "r")
+	index = index_file.read()
+	index_file.close()
+	print(index)
+	# Save the screenshot 
 
-				# Check if the user pressed the 'r' key
-			if k == ord('r'):
-				index_file = open("index.txt", "r")
-				index = index_file.read()
-				index_file.close()
-				print(index)
-				# Save the screenshot 
-				
-				file_name = "screenshot"+index+".jpg"
-				
-				j = int(index)+1
-				index_file = open("index.txt", "w")
-				index_file.write(str(j))
-				index_file.close()
+	file_name = "screenshot"+index+".jpg"
 
-				cv2.imwrite(os.path.join(file_path, file_name), frame)
+	j = int(index)+1
+	index_file = open("index.txt", "w")
+	index_file.write(str(j))
+	index_file.close()
 
-				# Display the "Screenshot saved" message
-				cv2.putText(frame, "Screenshot saved",(int(frame.shape[1]/2), int(frame.shape[0]/2)),font, 1,(255,255,255), 2,cv2.LINE_AA)
+	cv2.imwrite(os.path.join(file_path, file_name), frame)
 
-		cv2.imshow('frame', frame)
+	# Display the "Screenshot saved" message
+	cv2.putText(frame, "Screenshot saved",(int(frame.shape[1]/2), int(frame.shape[0]/2)),font, 1,(255,255,255), 2,cv2.LINE_AA)
+
+cv2.imshow('frame', frame)
 ```
 2.2. **Fine**
 
