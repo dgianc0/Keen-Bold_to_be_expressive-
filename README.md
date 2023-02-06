@@ -33,6 +33,9 @@ $ pip install ffmpeg moviepy
 ```
 
 # Utilizzo
+
+(Le istruzioni si susseguono uno dopo l'altro)
+
 Utilizza OpenCV, una libreria utilizzata per il processing delle immagini, e la libreria FER ( Facial Expression Recognition ) che è utilizzata per rilevare le emozioni dell'utente e
 visualizzare i punteggi emotivi.                                                              
 # Importo delle librerie
