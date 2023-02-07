@@ -275,7 +275,7 @@ vid.release()
 cv2.destroyAllWindows()
 ```
 
-Credits
+# Credits
 [Justin Shenk's Github](https://github.com/justinshenk/fer)
 [Chat Gbt](https://openai.com/blog/chatgpt/)
 Fablab Torino
