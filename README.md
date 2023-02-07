@@ -1,5 +1,6 @@
 # Keen - bold to be expressive 
-Il coraggio di manifestare i propri sentimenti
+
+![Group 4 (3)](https://user-images.githubusercontent.com/117916839/217205456-e2861a56-be53-45af-9abc-d13c752f72bb.png)
 
 # Contesto
 Sono passati 4 anni da quando è scoppiato il virus del Covid-19. Pian piano il mondo si sta riprendendo la propria libertà e la propria autonomia che gli erano stati privati durante gli anni della pandemia.                                                                           
@@ -9,6 +10,8 @@ verso gli altri. Molti hanno perso la propria capacità di esprimersi o rapporta
 # Soluzione 
 Keen propone un software in grado di riconoscere le espressioni facciali con una connessione neurale profonda. 
 Il progetto mira a dare una maggior consapevolezza delle nostre emozioni e di quelle degli altri. 
+
+![screenshot68 copia](https://user-images.githubusercontent.com/117916839/217205978-c7d22ec0-a5f1-48e2-ab47-4f9d90c6c9d6.jpg)
 
 # Installazione
 Attualmente FER supporta solo Python 3.6 in poi. Può essere installato tramite pip:
